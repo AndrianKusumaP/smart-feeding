@@ -23,9 +23,9 @@
                     <div class="mb-3">
                       <label for="jarak" class="form-label">Pilih Jarak Lontaran</label>
                       <select class="form-select" name="jarak" id="jarak" required>
-                        <option value="180" {{ $jarakLontaran == 180 ? 'selected' : '' }}>1-2 meter</option>
-                        <option value="220" {{ $jarakLontaran == 220 ? 'selected' : '' }}>3-4 meter</option>
-                        <option value="255" {{ $jarakLontaran == 255 ? 'selected' : '' }}>5-6 meter</option>
+                        <option value="180" {{ $jarakLontaran == 140 ? 'selected' : '' }}>1-1.5 meter</option>
+                        <option value="220" {{ $jarakLontaran == 180 ? 'selected' : '' }}>1.5-2 meter</option>
+                        <option value="255" {{ $jarakLontaran == 230 ? 'selected' : '' }}>2-2.5 meter</option>
                       </select>
                     </div>
                     <a href="{{ route('jadwal-pakan.index') }}" class="btn btn-danger">Kembali</a>

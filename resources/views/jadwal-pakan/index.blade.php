@@ -86,9 +86,9 @@
                         <tr>
                           @php
                             $label = match ((int) $jarakLontaran) {
-                                180 => '1-2 meter',
-                                220 => '3-4 meter',
-                                255 => '5-6 meter',
+                                180 => '1-1.5 meter',
+                                220 => '1.5-2 meter',
+                                255 => '2-2.5 meter',
                                 default => '-',
                             };
                           @endphp
