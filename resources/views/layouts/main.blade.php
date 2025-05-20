@@ -131,17 +131,6 @@
           console.error('❌ Gagal register service worker:', err);
         });
     }
-
-    // import {
-    //   onMessage
-    // } from 'https://…/firebase-messaging.js';
-
-    // onMessage(messaging, (payload) => {
-    //   new Notification(payload.notification.title, {
-    //     body: payload.notification.body,
-    //     icon: '/assets/images/favicon.ico'
-    //   });
-    // });
   </script>
 </body>
 

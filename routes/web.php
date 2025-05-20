@@ -1,13 +1,12 @@
 <?php
 
-use App\Http\Controllers\HistoryController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MonitoringController;
-use App\Http\Controllers\JadwalPakanController;
-use App\Http\Controllers\LoginController;
-use App\Models\DeviceToken;
 use Illuminate\Http\Request;
-use App\Helpers\FcmHelper;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\DeviceTokenController;
+use App\Http\Controllers\JadwalPakanController;
 
 Route::middleware('auth')->group(function () {
   Route::get('/', [MonitoringController::class, 'index'])->name('dashboard');
@@ -17,26 +16,7 @@ Route::middleware('auth')->group(function () {
   Route::post('/berat-pakan-manual/update', [JadwalPakanController::class, 'manualUpdate'])->name('berat-pakan-manual.update');
   Route::get('/jarak-lontaran/edit', [JadwalPakanController::class, 'jarakLontaranEdit'])->name('jarak-lontaran.edit');
   Route::post('/jarak-lontaran/update', [JadwalPakanController::class, 'jarakLontaranUpdate'])->name('jarak-lontaran.update');
-
-
-  Route::get('/test-kirim-notif', function () {
-    $token = DeviceToken::first()?->token;
-
-    if (!$token) {
-      return 'Tidak ada token di database.';
-    }
-
-    $res = FcmHelper::sendNotification(
-      $token,
-      'Peringatan Suhu!',
-      'Suhu air kolam terlalu panas!'
-    );
-
-    return $res;
-  });
-
-
-  Route::post('/simpan-device-token', [App\Http\Controllers\DeviceTokenController::class, 'store']);
+  Route::post('/simpan-device-token', [DeviceTokenController::class, 'store']);
 });
 
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');

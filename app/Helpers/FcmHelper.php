@@ -40,25 +40,10 @@ class FcmHelper
       'message' => [
         'token'        => $token,
 
-        // 👇 inilah yang membuat FCM otomatis mem-pop-up notifikasi
-        'notification' => [
-          'title' => $title,
-          'body'  => $body,
-          // optional: 'image' => url('/assets/images/banner.jpg'),
-        ],
-
         // (opsional) tetap boleh menambah data custom
         'data' => [
           'title' => $title,
           'body'  => $body,
-        ],
-
-        // (opsional) pengaturan web push tambahan
-        'webpush' => [
-          'notification' => [
-            'icon'  => url('/assets/images/favicon.ico'),
-            'badge' => url('/assets/images/favicon.ico'),
-          ],
         ],
       ],
     ];

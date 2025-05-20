@@ -6,6 +6,7 @@ use App\Helpers\FcmHelper;
 use App\Models\DeviceToken;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MonitorSensorAnomali extends Command
 {
@@ -16,68 +17,64 @@ class MonitorSensorAnomali extends Command
     {
         $firebaseUrl = 'https://smartfeeding-7dca8-default-rtdb.asia-southeast1.firebasedatabase.app/MonitoringKolam/realtime.json';
 
-        $this->info("Memulai pemantauan...");
+        try {
+            $response = Http::get($firebaseUrl);
 
-        while (true) {
-            try {
-                $response = Http::get($firebaseUrl);
-                if (!$response->successful()) {
-                    $this->error("Gagal ambil data dari Firebase.");
-                    sleep(5);
-                    continue;
-                }
-
-                $data = $response->json();
-                if (!$data) {
-                    $this->warn("Data kosong.");
-                    sleep(3);
-                    continue;
-                }
-
-                // Ambil nilai sensor
-                $suhu = $data['suhu'] ?? null;
-                $ph = $data['ph'] ?? null;
-                $kekeruhan = $data['kekeruhan'] ?? null;
-                $sisaPakan = $data['sisa_pakan'] ?? null;
-
-                $anomali = [];
-
-                if ($suhu !== null && ($suhu < 20 || $suhu > 30)) {
-                    $anomali[] = "Suhu air tidak normal: {$suhu}°C";
-                }
-
-                if ($ph !== null && ($ph < 6 || $ph > 9)) {
-                    $anomali[] = "pH air tidak normal: {$ph}";
-                }
-
-                if ($kekeruhan === 'agak keruh' || $kekeruhan === 'sangat keruh') {
-                    $anomali[] = "Kekeruhan air tidak normal: {$kekeruhan}";
-                }
-
-                if ($sisaPakan !== null && $sisaPakan < 30) {
-                    $anomali[] = "Sisa pakan terlalu sedikit: {$sisaPakan}%";
-                }
-
-                if (count($anomali)) {
-                    $message = implode("\n", $anomali);
-                    $this->warn("🚨 Anomali terdeteksi!\n$message");
-
-                    $tokens = DeviceToken::pluck('token');
-                    foreach ($tokens as $token) {
-                        FcmHelper::sendNotification($token, "🚨 Peringatan Kolam", $message);
-                    }
-
-                    // Hindari spam notifikasi, tunda sementara
-                    sleep(30);
-                } else {
-                    $this->info("✔️ Sensor normal.");
-                }
-
-                sleep(5); // Cek ulang tiap 5 detik
-            } catch (\Throwable $e) {
-                $this->error("Terjadi error: " . $e->getMessage());
-                sleep(5);
+            if (!$response->successful()) {
+                $this->error('Gagal ambil data Firebase');
+                return;
             }
+
+            $data = $response->json() ?? [];
+            $anomali = [];
+
+            $suhu       = $data['suhu']        ?? null;
+            $ph         = $data['ph']          ?? null;
+            $kekeruhan  = $data['kekeruhan']   ?? null;
+            $sisaPakan  = $data['pakan']       ?? null;
+
+            if ($suhu !== null) {
+                if ($suhu < 20) {
+                    $anomali[] = "🌡️ Suhu air terlalu dingin: {$suhu}°C";
+                } elseif ($suhu > 30) {
+                    $anomali[] = "🌡️ Suhu air terlalu panas: {$suhu}°C";
+                }
+            }
+
+            if ($ph !== null) {
+                if ($ph < 6) {
+                    $anomali[] = "🧪 pH air terlalu asam: {$ph}";
+                } elseif ($ph > 9) {
+                    $anomali[] = "🧪 pH air terlalu basa: {$ph}";
+                }
+            }
+
+            if ($kekeruhan !== null) {
+                $keruh = strtolower(trim($kekeruhan));
+                if (in_array($keruh, ['agak keruh', 'sangat keruh'])) {
+                    $anomali[] = "🌫️ Kekeruhan air tidak normal: {$kekeruhan}";
+                }
+            }
+
+            if ($sisaPakan !== null && $sisaPakan < 30) {
+                $anomali[] = "🐟 Sisa pakan terlalu sedikit: {$sisaPakan}%";
+            }
+
+            if (count($anomali) > 0) {
+                $pesan = implode("\n", $anomali);
+                $this->warn("🚨 Anomali:\n" . $pesan);
+
+                $tokens = DeviceToken::pluck('token');
+
+                foreach ($tokens as $token) {
+                    FcmHelper::sendNotification($token, '🚨 Peringatan Kolam', $pesan);
+                }
+            } else {
+                $this->info('✔️  Semua sensor normal');
+            }
+
+        } catch (\Throwable $e) {
+            $this->error('Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }

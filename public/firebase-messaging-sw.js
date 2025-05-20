@@ -17,12 +17,14 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-    console.log("[firebase-messaging-sw.js] Background message:", payload);
-
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: "/assets/images/favicon.ico",
+    console.log('[SW] bg message:', payload);
+  
+    const title = payload.data.title;
+    const options = {
+      body: payload.data.body,
+      icon: '/assets/images/favicon.ico',
     };
-    self.registration.showNotification(notificationTitle, notificationOptions);
-});
+  
+    self.registration.showNotification(title, options);
+  });
+  
