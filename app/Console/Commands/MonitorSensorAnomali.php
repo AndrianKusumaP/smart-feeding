@@ -35,9 +35,9 @@ class MonitorSensorAnomali extends Command
 
             if ($suhu !== null) {
                 if ($suhu < 20) {
-                    $anomali[] = "🌡️ Suhu air terlalu dingin: {$suhu}°C";
+                    $anomali[] = "🌡️ Suhu air rendah: {$suhu}°C";
                 } elseif ($suhu > 30) {
-                    $anomali[] = "🌡️ Suhu air terlalu panas: {$suhu}°C";
+                    $anomali[] = "🌡️ Suhu air tinggi: {$suhu}°C";
                 }
             }
 
