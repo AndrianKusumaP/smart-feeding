@@ -24,27 +24,25 @@
                 </div>
                 <h5 class="text-muted font-weight-semibold">Waktu & Tanggal</h5>
                 <h4 class="font-weight-bold mb-0" id="datetime"></h4>
+
+                <div id="espStatus" class="mt-3 mb-0 w-30 alert alert-info">
+                  Mengecek status Sistem...
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Tombol Restart dan Beri Pakan -->
+        <!-- Tombol Restart -->
         <div class="row">
           <div class="col-12">
             <div class="card p-4">
               <div class="card-body d-flex justify-content-center flex-column align-items-center text-center">
-                <div class="d-flex gap-3 mb-3">
-                  <button id="restartBtn" class="btn btn-success btn-lg"
-                    style="padding: 0.75rem 1.5rem; font-size: 1.5rem;">
-                    <i class="fas fa-sync-alt me-2"></i> Restart
-                  </button>
-                  <button id="feedBtn" class="btn btn-primary btn-lg"
-                    style="padding: 0.75rem 1.5rem; font-size: 1.5rem;">
-                    <i class="fas fa-fish me-2"></i> Beri Pakan
-                  </button>
-                </div>
-                <h5 class="text-muted font-weight-semibold">Tekan tombol untuk restart atau beri pakan secara manual</h5>
+                <button id="restartBtn" class="btn btn-success btn-lg"
+                  style="padding: 0.75rem 1.5rem; font-size: 1.5rem;">
+                  <i class="fas fa-sync-alt me-2"></i> Restart
+                </button>
+                <h5 class="text-muted font-weight-semibold mt-3">Tekan tombol untuk me-restart sistem</h5>
               </div>
             </div>
           </div>
@@ -135,6 +133,25 @@
     const dataRef = ref(database, 'MonitoringKolam/realtime');
     onValue(dataRef, (snapshot) => {
       const data = snapshot.val();
+      const statusElem = document.getElementById('espStatus');
+
+      if (data.waktu_terakhir) {
+        const lastTime = new Date(data.waktu_terakhir);
+        const now = new Date();
+        const diff = Math.floor((now - lastTime) / 1000);
+
+        if (diff > 60) {
+          statusElem.className = 'mt-3 mb-0 w-30 alert alert-danger';
+          statusElem.textContent = `Sistem Offline`;
+        } else {
+          statusElem.className = 'mt-3 mb-0 w-30 alert alert-success';
+          statusElem.textContent = `Sistem Online`;
+        }
+      } else {
+        statusElem.className = 'mt-3 mb-0 w-30 alert alert-warning';
+        statusElem.textContent = 'Belum ada data waktu dari ESP32';
+      }
+
       if (data) {
         document.getElementById('kekeruhan').textContent = data.kekeruhan ?? 'N/A';
         document.getElementById('pakan').textContent = data.pakan ? `${data.pakan}%` : 'N/A';
@@ -179,37 +196,6 @@
         restartBtn.classList.add('btn-success');
         restartBtn.innerHTML = '<i class="fas fa-sync-alt me-2"></i> Restart';
         restartBtn.disabled = false;
-      }
-    });
-
-    // Tombol beri pakan logic
-    const feedBtn = document.getElementById('feedBtn');
-    const feedRef = ref(database, 'ControlSystem/beriPakan');
-
-    feedBtn.addEventListener('click', async () => {
-      await set(feedRef, true); // ESP32 akan mendeteksi ini lalu memberi makan
-
-      feedBtn.classList.remove('btn-primary');
-      feedBtn.classList.add('btn-warning');
-      feedBtn.innerHTML = '<i class="fas fa-fish me-2"></i> Memberi Pakan...';
-      feedBtn.disabled = true;
-    });
-
-    // Dengarkan perubahan status beriPakan
-    onValue(feedRef, (snapshot) => {
-      const status = snapshot.val();
-      if (status === true) {
-        // Kalau sedang memberi pakan
-        feedBtn.classList.remove('btn-primary');
-        feedBtn.classList.add('btn-warning');
-        feedBtn.innerHTML = '<i class="fas fa-fish me-2"></i> Memberi Pakan...';
-        feedBtn.disabled = true;
-      } else {
-        // Kalau tidak sedang memberi pakan
-        feedBtn.classList.remove('btn-warning');
-        feedBtn.classList.add('btn-primary');
-        feedBtn.innerHTML = '<i class="fas fa-fish me-2"></i> Beri Pakan';
-        feedBtn.disabled = false;
       }
     });
 

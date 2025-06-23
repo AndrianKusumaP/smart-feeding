@@ -18,14 +18,14 @@
             <div class="card">
               <div class="card-content">
                 <div class="card-body">
-                  <form action="{{ route('berat-pakan-manual.update') }}" method="POST">
+                  <form action="{{ route('pakan-manual.update') }}" method="POST">
                     @csrf
                     <div class="mb-3">
                       <label for="berat" class="form-label">Berat Pakan Manual (gram)</label>
                       <input type="number" class="form-control" id="berat" name="berat"
                              value="{{ old('berat', $beratPakanManual) }}" placeholder="Masukkan berat dalam gram" required>
                     </div>
-                    <a href="{{ route('jadwal-pakan.index') }}" class="btn btn-danger">Kembali</a>
+                    <a href="{{ route('pakan-manual.index') }}" class="btn btn-danger">Kembali</a>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                   </form>
                 </div>

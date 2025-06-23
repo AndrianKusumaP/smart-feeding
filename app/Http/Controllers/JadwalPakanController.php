@@ -73,20 +73,6 @@ class JadwalPakanController extends Controller
         return view('jadwal-pakan.edit', ['data' => $data, 'id' => $id]);
     }
 
-    public function manualEdit()
-    {
-        $data = $this->firebase->getData('ControlSystem/beratPakanManual');
-
-        return view('berat-pakan-manual.edit', ['beratPakanManual' => $data]);
-    }
-
-    public function jarakLontaranEdit()
-    {
-        $data = $this->firebase->getData('ControlSystem/jarakLontaran');
-
-        return view('jarak-lontaran.edit', ['jarakLontaran' => $data]);
-    }
-
     /**
      * Update the specified resource in storage.
      */
@@ -103,31 +89,6 @@ class JadwalPakanController extends Controller
 
         // Redirect ke halaman index dengan pesan sukses
         return redirect('jadwal-pakan')->with('success', 'Data berhasil diperbarui!');
-    }
-
-    public function manualUpdate(Request $request)
-    {
-        // Validasi input
-        $data = $request->validate([
-            'berat' => 'required|numeric'
-        ]);
-
-        // Update data di Firebase pada path "ControlSystem"
-        $this->firebase->setValue('ControlSystem/beratPakanManual', (float) $data['berat']);
-
-        // Redirect ke halaman index dengan pesan sukses
-        return redirect('jadwal-pakan')->with('success', 'Data berhasil diperbarui!');
-    }
-
-    public function jarakLontaranUpdate(Request $request)
-    {
-        $data = $request->validate([
-            'jarak' => 'required|numeric|in:180,220,255',
-        ]);
-
-        $this->firebase->setValue('ControlSystem/jarakLontaran', (float) $data['jarak']);
-
-        return redirect()->route('jadwal-pakan.index')->with('success', 'Jarak lontaran berhasil diperbarui!');
     }
 
     /**

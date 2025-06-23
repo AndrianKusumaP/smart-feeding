@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Jadwal Pakan')
+@section('title', 'Pemberian Pakan Otomatis')
 
 @section('content')
   <div class="page-heading">
@@ -13,7 +13,7 @@
     <div class="page-title">
       <div class="row align-items-center mx-3 mb-2">
         <div class="col-6">
-          <h3>Pemberian Pakan</h3>
+          <h3>Pemberian Pakan Otomatis</h3>
         </div>
       </div>
     </div>
@@ -67,74 +67,7 @@
               </div>
             </div>
           </div>
-
-          {{-- Card Jarak Lontaran --}}
-          <div class="col-12">
-            <div class="card">
-              <div class="card-content">
-                <div class="card-body">
-                  <h4 class="text-start mb-4">Jarak Lontaran</h4>
-                  <div class="table-responsive">
-                    <table class="table table-lg text-center">
-                      <thead>
-                        <tr>
-                          <th style="width: 200px;">JARAK</th>
-                          <th style="width: 150px;">AKSI</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          @php
-                            $label = match ((int) $jarakLontaran) {
-                                180 => '1-1.5 meter',
-                                220 => '1.5-2 meter',
-                                255 => '2-2.5 meter',
-                                default => '-',
-                            };
-                          @endphp
-
-                          <td>{{ $label }}</td>
-                          <td>
-                            <a href="{{ route('jarak-lontaran.edit') }}" class="btn btn-warning btn-sm">Edit</a>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {{-- Card Berat Pakan Manual --}}
-          <div class="col-12">
-            <div class="card">
-              <div class="card-content">
-                <div class="card-body">
-                  <h4 class="text-start mb-4">Berat Pakan Manual</h4>
-                  <div class="table-responsive">
-                    <table class="table table-lg text-center">
-                      <thead>
-                        <tr>
-                          <th style="width: 200px;">BERAT</th>
-                          <th style="width: 150px;">AKSI</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>{{ $beratPakanManual ?? '-' }} gram</td>
-                          <td>
-                            <a href="{{ route('berat-pakan-manual.edit') }}" class="btn btn-warning btn-sm">Edit</a>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          
         </div>
       </div>
     </section>
